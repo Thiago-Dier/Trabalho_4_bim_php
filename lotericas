@@ -14,6 +14,10 @@ function laranja($texto) {
     return "\033[33m$texto\033[0m";
 }
 
+function rosa($texto) {
+    return "\033[35m$texto\033[0m";
+}
+
 
 // ---------------- TABELAS DE PREÇOS ----------------
 
@@ -88,6 +92,26 @@ function valorLotomania() {
 }
 
 
+
+// ---------------- FUNÇÕES DE PROBABILIDADE (NOVO!) ----------------
+
+function combinacao($n, $k) {
+    if ($k > $n) return 0;
+    $num = 1;
+    for ($i = 0; $i < $k; $i++) {
+        $num *= ($n - $i);
+        $num /= ($i + 1);
+    }
+    return $num;
+}
+
+function probabilidade($totalNumerosDisponiveis, $qtdEscolhida) {
+    $totalComb = combinacao($totalNumerosDisponiveis, $qtdEscolhida);
+    return 1 / $totalComb;
+}
+
+
+
 // ---------------- GERADOR DE APOSTA ----------------
 
 function gerarAposta($qtdNumeros, $min, $max) {
@@ -105,6 +129,7 @@ function gerarAposta($qtdNumeros, $min, $max) {
 }
 
 
+
 // ---------------- MOSTRAR APOSTAS ----------------
 
 function mostrarAposta($jogo, $qtdNumeros, $valor, $min, $max) {
@@ -120,9 +145,16 @@ function mostrarAposta($jogo, $qtdNumeros, $valor, $min, $max) {
 
     // cálculo verdadeiro
     $total = $valor * $qtdApostas;
-
     print laranja("\nTotal gasto: R$ " . number_format($total, 2, ',', '.')) . "\n";
+
+    // ---------- PROBABILIDADE (NOVO!) ----------
+    $prob = probabilidade($max, $qtdNumeros);
+
+    echo rosa("\nProbabilidade de acertar TODOS os números: ");
+    echo branco("1 em " . number_format(1 / $prob, 0, ',', '.'));
+    echo "\n";
 }
+
 
 
 // ---------------- MENU ----------------
@@ -138,7 +170,7 @@ $opcao = (int) readline("Opção: ");
 switch ($opcao) {
 
 case 1:
-    $qtd = (int) readline("Quantos números (6 a 20)? ");
+    $qtd = (int) readline ("Quantos números (6 a 20)? ");
     if ($qtd < 6 || $qtd > 20) {
         print laranja("Número inválido para Mega-Sena.\n");
     } else {
